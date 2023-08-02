@@ -9,4 +9,4 @@ from . import job
 from . import transport
 from . import language
 from . import emoji
-from . import all_messsage
+from . import all_message

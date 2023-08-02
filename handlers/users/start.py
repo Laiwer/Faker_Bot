@@ -1,6 +1,6 @@
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandStart
-from loader import dp, bot
+from loader import dp, bot, fake
 from aiogram import types
 from keyboards.inline.subscribe_channel_kb import check_subscribe_keyboard
 from keyboards.default.main_kb import main_keyboard
@@ -27,6 +27,7 @@ async def check_subscribe(message: types.Message):
             msg += "\n\nЯ 🥸 <b>𝙵𝚊𝚔𝚎𝚛 𝙱𝚘𝚝</b>, генерирую случайные данные: <b><i>ФИО, адреса, профессии, даты и т.п.</i></b>"
             msg += "\n\n⬇ Снизу на клавиатуре выбери что сгенирировать"
             await message.answer(msg, reply_markup=main_keyboard)
+            await bot.send_location(message.from_user.id, fake, fake.latitude(), fake.longitude())
 
 @dp.callback_query_handler(text="check_subscribe_on_news_channel")
 async def bot_start(call: types.CallbackQuery):
