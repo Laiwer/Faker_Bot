@@ -79,6 +79,7 @@ async def all_animation(message: types.Message):
 
 @dp.message_handler(content_types=types.ContentType.LOCATION)
 async def all_animation(message: types.Message):
+    print(message)
     if message.chat.type == "private":
         if await check_sub_channel(message.from_user.id):
             await message.reply_location(0, 0)

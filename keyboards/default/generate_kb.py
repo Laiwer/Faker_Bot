@@ -1,7 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 
-main_keyboard = ReplyKeyboardMarkup(
+generate_keyboard = ReplyKeyboardMarkup(
     keyboard=[
         [
             KeyboardButton(text="🪪 ФИО"),
