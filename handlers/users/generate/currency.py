@@ -2,7 +2,7 @@ from loader import dp, fake
 from aiogram import types
 from keyboards.callbacks.callback_currency import currecny_inline_callback
 from keyboards.inline.currency_kb import currency_category_keyboard, currency_paper_category_keyboard, currency_crypto_category_keyboard
-from handlers.users.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
 
 
 @dp.message_handler(text="💵 Валюты")
@@ -33,7 +33,7 @@ async def back_to_currency(call: types.CallbackQuery):
 async def paper_currency(call: types.CallbackQuery):
     await call.answer()
     if not await check_sub_channel(call.from_user.id):
-            await keyboard_check_channel(call.message)
+        await keyboard_check_channel(call.message)
     else:
         cur = ("", "")
         if "all" in call.data:
@@ -58,7 +58,7 @@ async def paper_currency(call: types.CallbackQuery):
 async def crypto_currency(call: types.CallbackQuery):
     await call.answer()
     if not await check_sub_channel(call.from_user.id):
-            await keyboard_check_channel(call.message)
+        await keyboard_check_channel(call.message)
     else:
         cur = ("", "")
         if "all" in call.data:

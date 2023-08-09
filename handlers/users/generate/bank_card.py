@@ -2,7 +2,7 @@ from loader import dp, fake
 from aiogram import types
 from keyboards.callbacks.callback_bank_card import bank_card_inline_callback
 from keyboards.inline.bank_card_kb import bank_card_category_keyboard
-from handlers.users.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
 
 
 @dp.message_handler(text="💳 Банковская карта")
@@ -17,7 +17,7 @@ async def main_bank_card(message: types.Message):
 async def bank_card_data(call: types.CallbackQuery):
     await call.answer()
     if not await check_sub_channel(call.from_user.id):
-            await keyboard_check_channel(call.message)
+        await keyboard_check_channel(call.message)
     else:
         test_bank_card = {
             "card_bank": f"<b><i>Банковская карта:</i></b>\n<code>{fake.credit_card_full()}</code>",

@@ -3,13 +3,13 @@ from aiogram import types
 from keyboards.callbacks.callback_locate import locate_inline_callback
 from keyboards.inline.locate_kb import locate_category_keyboard, locate_address_category_keyboard, \
     locate_coordinate_category_keyboard, locate_geo_category_keyboard
-from handlers.users.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
 
 
 @dp.message_handler(text="🗺 Расположение")
 async def main_locate(message: types.Message):
     if not await check_sub_channel(message.from_user.id):
-            await keyboard_check_channel(message)
+        await keyboard_check_channel(message)
     else:
         await message.answer("Выбери снизу ⬇", reply_markup=locate_category_keyboard)
 
@@ -41,7 +41,7 @@ async def back_to_locate_category(call: types.CallbackQuery):
 async def locate_address_data(call: types.CallbackQuery):
     await call.answer()
     if not await check_sub_channel(call.from_user.id):
-            await keyboard_check_channel(call.message)
+        await keyboard_check_channel(call.message)
     else:
         test_locate = {
             "all_address": f"<b><i>Полный адрес:</i></b>\n<code>{fake.address()}</code>",
@@ -64,7 +64,7 @@ async def locate_address_data(call: types.CallbackQuery):
 async def locate_coordinate_data(call: types.CallbackQuery):
     await call.answer()
     if not await check_sub_channel(call.from_user.id):
-            await keyboard_check_channel(call.message)
+        await keyboard_check_channel(call.message)
     else:
         test_locate = {
             "longitude": f"<b><i>Долгота (от -180 до 180):</i></b>\n<code>{fake.longitude()}</code>",
@@ -85,7 +85,7 @@ async def locate_coordinate_data(call: types.CallbackQuery):
 async def locate_geo_data(call: types.CallbackQuery):
     await call.answer()
     if not await check_sub_channel(call.from_user.id):
-            await keyboard_check_channel(call.message)
+        await keyboard_check_channel(call.message)
     else:
         _random_russia = fake.local_latlng(country_code="RU")
         _random_world = fake.location_on_land()

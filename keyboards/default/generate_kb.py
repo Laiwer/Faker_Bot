@@ -23,5 +23,9 @@ generate_keyboard = ReplyKeyboardMarkup(
             KeyboardButton(text="👅 Язык"),
             KeyboardButton(text="🎭 Эмодзи"),
         ],
-    ]
+        [
+            KeyboardButton(text="⏪ Вернуться на главную")
+        ]
+    ],
+    resize_keyboard=True
 )

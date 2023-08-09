@@ -2,7 +2,7 @@ from loader import dp, fake
 from aiogram import types
 from keyboards.callbacks.callback_company import company_inline_callback
 from keyboards.inline.company_kb import company_category_keyboard
-from handlers.users.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
 
 
 @dp.message_handler(text="🏢 Компания")
@@ -17,7 +17,7 @@ async def main_company(message: types.Message):
 async def company_data(call: types.CallbackQuery):
     await call.answer()
     if not await check_sub_channel(call.from_user.id):
-            await keyboard_check_channel(call.message)
+        await keyboard_check_channel(call.message)
     else:
         test_company = {
             "name_company": f"<b><i>Название компании:</i></b>\n<code>{fake.company()}</code>",

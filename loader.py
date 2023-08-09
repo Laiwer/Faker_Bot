@@ -2,6 +2,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from data.data_config import BOT_TOKEN
 from faker import Faker
+from geopy.geocoders import Nominatim
 
 
 bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
@@ -9,3 +10,4 @@ storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
 fake = Faker("ru_RU")
+geolocator = Nominatim(user_agent="Telegram Bot")

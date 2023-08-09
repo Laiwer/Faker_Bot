@@ -3,7 +3,7 @@ from aiogram import types
 from keyboards.callbacks.callback_datetime import datetime_inline_callback
 from keyboards.inline.date_time_kb import datetime_category_keyboard, datetime_dates_category_keyboard, \
     datetime_dating_category_keyboard, datetime_times_category_keyboard
-from handlers.users.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
 
 
 @dp.message_handler(text="📅 Дата и время")
@@ -39,7 +39,7 @@ async def back_to_datetime(call: types.CallbackQuery):
 async def dating_datetime(call: types.CallbackQuery):
     await call.answer()
     if not await check_sub_channel(call.from_user.id):
-            await keyboard_check_channel(call.message)
+        await keyboard_check_channel(call.message)
     else:
         test_datetime = {
             "day_month": f"<b><i>День месяца:</i></b>\n<code>{fake.day_of_month()}</code>",
@@ -62,7 +62,7 @@ async def dating_datetime(call: types.CallbackQuery):
 async def dates_datetime(call: types.CallbackQuery):
     await call.answer()
     if not await check_sub_channel(call.from_user.id):
-            await keyboard_check_channel(call.message)
+        await keyboard_check_channel(call.message)
     else:
         test_datetime = {
             "birthday": f"<b><i>Дата рождения:</i></b>\n<code>{fake.date_of_birth().strftime('%d.%m.%Y')}</code>",
@@ -86,7 +86,7 @@ async def dates_datetime(call: types.CallbackQuery):
 async def times_datetime(call: types.CallbackQuery):
     await call.answer()
     if not await check_sub_channel(call.from_user.id):
-            await keyboard_check_channel(call.message)
+        await keyboard_check_channel(call.message)
     else:
         test_datetime = {
             "time_24": f"<b><i>Время:</i></b>\n<code>{fake.time()}</code>",

@@ -2,7 +2,7 @@ from loader import dp, fake
 from aiogram import types
 from keyboards.inline.language_kb import language_category_keyboard
 from keyboards.callbacks.callback_language import language_inline_callback
-from handlers.users.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
 
 
 @dp.message_handler(text="👅 Язык")
@@ -17,7 +17,7 @@ async def main_language(message: types.Message):
 async def language_data(call: types.CallbackQuery):
     await call.answer()
     if not await check_sub_channel(call.from_user.id):
-            await keyboard_check_channel(call.message)
+        await keyboard_check_channel(call.message)
     else:
         test_language = {
             "names": f"<b><i>Случайный язык:</i></b>\n<code>{fake.language_name()}</code>",
