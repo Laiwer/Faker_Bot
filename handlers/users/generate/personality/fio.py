@@ -1,12 +1,15 @@
 from loader import dp, fake
 from aiogram import types
-from keyboards.callbacks.callback_fio import fio_inline_callback
-from keyboards.inline.fio_kb import fio_category_keyboard, fio_male_category_keyboard, fio_female_category_keyboard
+from keyboards.callbacks.generate.personality.callback_fio import fio_inline_callback
+from keyboards.inline.generate.person.fio_kb import fio_category_keyboard, fio_male_category_keyboard, fio_female_category_keyboard
 from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from database.base import add_last_message
+from aiogram.utils.exceptions import MessageNotModified
 
 
 @dp.message_handler(text="🪪 ФИО")
 async def main_fio(message: types.Message):
+    add_last_message(message.chat.id)
     if not await check_sub_channel(message.from_user.id):
         await keyboard_check_channel(message)
     else:
@@ -16,22 +19,26 @@ async def main_fio(message: types.Message):
 @dp.callback_query_handler(text="fio_male")
 async def fio_male_category(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     await call.message.edit_text("Выбери снизу ⬇", reply_markup=fio_male_category_keyboard)
 
 @dp.callback_query_handler(text="fio_female")
 async def fio_female_category(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     await call.message.edit_text("Выбери снизу ⬇", reply_markup=fio_female_category_keyboard)
 
 @dp.callback_query_handler(text="back_to_fio_category")
 async def back_to_fio(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     await call.message.edit_text("Выбери снизу ⬇", reply_markup=fio_category_keyboard)
 
 
 @dp.callback_query_handler(fio_inline_callback.filter(gender="male"))
 async def male_fio(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     if not await check_sub_channel(call.from_user.id):
         await keyboard_check_channel(call.message)
     else:
@@ -47,12 +54,13 @@ async def male_fio(call: types.CallbackQuery):
                 msg += test_fio[i]
         try:
             await call.message.edit_text(msg, reply_markup=fio_male_category_keyboard)
-        except Exception: pass
+        except MessageNotModified: pass
 
 
 @dp.callback_query_handler(fio_inline_callback.filter(gender="female"))
 async def female_fio(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     if not await check_sub_channel(call.from_user.id):
         await keyboard_check_channel(call.message)
     else:
@@ -68,4 +76,4 @@ async def female_fio(call: types.CallbackQuery):
                 msg += test_fio[i]
         try:
             await call.message.edit_text(msg, reply_markup=fio_female_category_keyboard)
-        except Exception: pass
+        except MessageNotModified: pass

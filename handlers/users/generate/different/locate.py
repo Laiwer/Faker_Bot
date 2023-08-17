@@ -1,13 +1,16 @@
 from loader import dp, bot, fake
 from aiogram import types
-from keyboards.callbacks.callback_locate import locate_inline_callback
-from keyboards.inline.locate_kb import locate_category_keyboard, locate_address_category_keyboard, \
+from keyboards.callbacks.generate.different.callback_locate import locate_inline_callback
+from keyboards.inline.generate.different.locate_kb import locate_category_keyboard, locate_address_category_keyboard, \
     locate_coordinate_category_keyboard, locate_geo_category_keyboard
 from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from database.base import add_last_message
+from aiogram.utils.exceptions import MessageNotModified
 
 
 @dp.message_handler(text="🗺 Расположение")
 async def main_locate(message: types.Message):
+    add_last_message(message.chat.id)
     if not await check_sub_channel(message.from_user.id):
         await keyboard_check_channel(message)
     else:
@@ -17,21 +20,25 @@ async def main_locate(message: types.Message):
 @dp.callback_query_handler(text="locate_address_category")
 async def locate_address_category(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     await call.message.edit_text("Выбери снизу ⬇", reply_markup=locate_address_category_keyboard)
 
 @dp.callback_query_handler(text="locate_coordinate_category")
 async def locate_coordinate_category(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     await call.message.edit_text("Выбери снизу ⬇", reply_markup=locate_coordinate_category_keyboard)
 
 @dp.callback_query_handler(text="locate_geo_category")
 async def locate_coordinate_category(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     await call.message.edit_text("Выбери снизу ⬇", reply_markup=locate_geo_category_keyboard)
 
 @dp.callback_query_handler(text="back_to_locate_category")
 async def back_to_locate_category(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     if "Ширина" in call.message.text:
         await bot.delete_message(call.message.chat.id, call.message.message_id-1)
     await call.message.edit_text("Выбери снизу ⬇", reply_markup=locate_category_keyboard)
@@ -40,6 +47,7 @@ async def back_to_locate_category(call: types.CallbackQuery):
 @dp.callback_query_handler(locate_inline_callback.filter(data="add_ss"))
 async def locate_address_data(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     if not await check_sub_channel(call.from_user.id):
         await keyboard_check_channel(call.message)
     else:
@@ -49,6 +57,7 @@ async def locate_address_data(call: types.CallbackQuery):
             "street_address": f"<b><i>Адрес с улицей и домом:</i></b>\n<code>{fake.street_address()}</code>",
             "street_name": f"<b><i>Название улицы:</i></b>\n<code>{fake.street_name()}</code>",
             "city": f"<b><i>Название города:</i></b>\n<code>{fake.city()}</code>",
+            "region": f"<b><i>Субъект Российской Федерации:</i></b>\n<code>{fake.administrative_unit()}</code>",
             "post_index": f"<b><i>Почтовый индекс:</i></b>\n<code>{fake.postcode()}</code>",
         }
         msg = ""
@@ -57,12 +66,13 @@ async def locate_address_data(call: types.CallbackQuery):
                 msg += test_locate[i]
         try:
             await call.message.edit_text(msg, reply_markup=locate_address_category_keyboard)
-        except Exception: pass
+        except MessageNotModified: pass
 
 
 @dp.callback_query_handler(locate_inline_callback.filter(data="coord_s"))
 async def locate_coordinate_data(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     if not await check_sub_channel(call.from_user.id):
         await keyboard_check_channel(call.message)
     else:
@@ -78,12 +88,13 @@ async def locate_coordinate_data(call: types.CallbackQuery):
                 msg += test_locate[i]
         try:
             await call.message.edit_text(msg, reply_markup=locate_coordinate_category_keyboard)
-        except Exception: pass
+        except MessageNotModified: pass
 
 
 @dp.callback_query_handler(locate_inline_callback.filter(data="geo_pos"))
 async def locate_geo_data(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     if not await check_sub_channel(call.from_user.id):
         await keyboard_check_channel(call.message)
     else:
@@ -102,7 +113,7 @@ async def locate_geo_data(call: types.CallbackQuery):
         try:
             if "Ширина" in call.message.text:
                 await bot.delete_message(call.message.chat.id, call.message.message_id-1)
-            await call.message.delete()
+            await bot.delete_message(call.message.chat.id, call.message.message_id)
             await bot.send_location(call.message.chat.id, test_locate[key][0][0], test_locate[key][0][1])
             await call.message.answer(msg, reply_markup=locate_geo_category_keyboard)
-        except Exception: pass
+        except MessageNotModified: pass

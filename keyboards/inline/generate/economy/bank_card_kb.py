@@ -10,6 +10,9 @@ bank_card_category_keyboard = InlineKeyboardMarkup(
             InlineKeyboardButton("💰 Платёжная система", callback_data="bank_card:_:pay_system")
         ],
         [
+            InlineKeyboardButton("🏦 Банк", callback_data="bank_card:_:name_bank")
+        ],
+        [
             InlineKeyboardButton("🔢 Номер карты", callback_data="bank_card:_:id_card")
         ],
         [

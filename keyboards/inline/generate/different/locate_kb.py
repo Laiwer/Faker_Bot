@@ -35,6 +35,9 @@ locate_address_category_keyboard = InlineKeyboardMarkup(
             InlineKeyboardButton("🏙 Город", callback_data="locate:add_ss:city")
         ],
         [
+            InlineKeyboardButton("🇷🇺 Субъекты РФ", callback_data="locate:add_ss:region")
+        ],
+        [
             InlineKeyboardButton("📬 Почтовый индекс", callback_data="locate:add_ss:post_index")
         ],
         [

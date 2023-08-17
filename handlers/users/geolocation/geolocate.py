@@ -1,8 +1,8 @@
 from loader import dp, bot, geolocator
 from aiogram import types
 from aiogram.dispatcher.storage import FSMContext
-from keyboards.inline.geolocate_kb import geolocation_choice, geolocation_address_choice
-from keyboards.callbacks.callback_geolocate import geolocate_inline_callback
+from keyboards.inline.geolocation.geolocate_kb import geolocation_choice, geolocation_address_choice
+from keyboards.callbacks.geolocation.callback_geolocate import geolocate_inline_callback
 from database.base import add_last_message, update_data_in_geolocate, get_data_from_geolocate, existe_in_db, \
 add_user_in_geolocate
 from states.geolocate_state import geolocate_search
@@ -10,6 +10,7 @@ from data.list_answer_bot import NUMBER_ANSWER as NUM_ANSWER
 from keyboards.default.back_from_state_geo_kb import back_to_main
 from keyboards.default.main import main_keyboard
 from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from aiogram.utils.exceptions import MessageNotModified
 
 
 def is_number(num):
@@ -50,6 +51,12 @@ async def return_to_geolocate_choice(message: types.Message, state: FSMContext):
     await state.finish()
 
 
+@dp.message_handler(text="⏪ Вернуться")
+async def error_return_to_choice(message: types.Message):
+    add_last_message(message.chat.id)
+    await message.answer("⏺ Главная страница", reply_markup=main_keyboard)
+
+
 @dp.callback_query_handler(geolocate_inline_callback.filter(_pass="_"))
 async def search_geolocate(call: types.CallbackQuery):
     await call.answer()
@@ -70,11 +77,10 @@ async def search_geolocate(call: types.CallbackQuery):
         for i in msg_geolocate:
             if i in call.data:
                 msg += msg_geolocate[i]
-        try:
-            await call.message.delete()
-            await call.message.answer(msg, reply_markup=back_to_main)
-            await geolocate_search.Q1.set()
-        except Exception: pass
+
+        await bot.delete_message(call.message.chat.id, call.message.message_id)
+        await call.message.answer(msg, reply_markup=back_to_main)
+        await geolocate_search.Q1.set()
 
 
 @dp.message_handler(state=geolocate_search.Q1, content_types=[types.ContentType.LOCATION, types.ContentType.TEXT])
@@ -155,7 +161,7 @@ async def search_geolocate_q1(message: types.Message, state: FSMContext):
             
             if data[0] in ["coordinate", "point"]:
                 if data[0] == "point":
-                    await message.delete()
+                    await bot.delete_message(message.chat.id, message.message_id)
                 await message.answer_location(location[-1][0], location[-1][1])
                 msg = f"<code>{str(location[-1])[1:-1]}</code>\n"
                 for i in location[0].split(', '):
@@ -181,7 +187,7 @@ async def next_page(call: types.CallbackQuery):
             update_data_in_geolocate(call.message.chat.id, "now_index", get_data_from_geolocate(call.message.chat.id)[2]+1)
 
             await bot.delete_message(call.message.chat.id, call.message.message_id-1)
-            await call.message.delete()
+            await bot.delete_message(call.message.chat.id, call.message.message_id)
 
             data = get_data_from_geolocate(call.message.chat.id)
             if data[2]+1 == data[3]:
@@ -216,7 +222,7 @@ async def previus_page(call: types.CallbackQuery):
         if get_data_from_geolocate(call.message.chat.id)[2] != 0:
             update_data_in_geolocate(call.message.chat.id, "now_index", get_data_from_geolocate(call.message.chat.id)[2]-1)
             await bot.delete_message(call.message.chat.id, call.message.message_id-1)
-            await call.message.delete()
+            await bot.delete_message(call.message.chat.id, call.message.message_id)
 
             data = get_data_from_geolocate(call.message.chat.id)
             if data[2] == 0:
@@ -243,5 +249,5 @@ async def previus_page(call: types.CallbackQuery):
 
 @dp.callback_query_handler(text="______")
 async def number_callback(call: types.CallbackQuery):
-    await call.answer()
+    await call.answer("🔢 Страницы")
     add_last_message(call.message.chat.id)

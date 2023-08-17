@@ -1,13 +1,16 @@
 from loader import dp, fake
 from aiogram import types
-from keyboards.callbacks.callback_datetime import datetime_inline_callback
-from keyboards.inline.date_time_kb import datetime_category_keyboard, datetime_dates_category_keyboard, \
+from keyboards.callbacks.generate.different.callback_datetime import datetime_inline_callback
+from keyboards.inline.generate.different.date_time_kb import datetime_category_keyboard, datetime_dates_category_keyboard, \
     datetime_dating_category_keyboard, datetime_times_category_keyboard
 from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from database.base import add_last_message
+from aiogram.utils.exceptions import MessageNotModified
 
 
 @dp.message_handler(text="📅 Дата и время")
 async def main_datetime(message: types.Message):
+    add_last_message(message.chat.id)
     if not await check_sub_channel(message.from_user.id):
         await keyboard_check_channel(message)
     else:
@@ -17,27 +20,32 @@ async def main_datetime(message: types.Message):
 @dp.callback_query_handler(text="datetime_dating")
 async def datetime_dating_category(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     await call.message.edit_text("Выбери снизу ⬇", reply_markup=datetime_dating_category_keyboard)
 
 @dp.callback_query_handler(text="datetime_dates")
 async def datetime_dates_category(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     await call.message.edit_text("Выбери снизу ⬇", reply_markup=datetime_dates_category_keyboard)
 
 @dp.callback_query_handler(text="datetime_times")
 async def datetime_times_category(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     await call.message.edit_text("Выбери снизу ⬇", reply_markup=datetime_times_category_keyboard)
 
 @dp.callback_query_handler(text="back_to_datetime_category")
 async def back_to_datetime(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     await call.message.edit_text("Выбери снизу ⬇", reply_markup=datetime_category_keyboard)
 
 
 @dp.callback_query_handler(datetime_inline_callback.filter(what="dating"))
 async def dating_datetime(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     if not await check_sub_channel(call.from_user.id):
         await keyboard_check_channel(call.message)
     else:
@@ -55,12 +63,13 @@ async def dating_datetime(call: types.CallbackQuery):
                 msg += test_datetime[i]
         try:
             await call.message.edit_text(msg, reply_markup=datetime_dating_category_keyboard)
-        except Exception: pass
+        except MessageNotModified: pass
 
 
 @dp.callback_query_handler(datetime_inline_callback.filter(what="dates"))
 async def dates_datetime(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     if not await check_sub_channel(call.from_user.id):
         await keyboard_check_channel(call.message)
     else:
@@ -79,12 +88,13 @@ async def dates_datetime(call: types.CallbackQuery):
                 msg += test_datetime[i]
         try:
             await call.message.edit_text(msg, reply_markup=datetime_dates_category_keyboard)
-        except Exception: pass
+        except MessageNotModified: pass
 
 
 @dp.callback_query_handler(datetime_inline_callback.filter(what="times"))
 async def times_datetime(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     if not await check_sub_channel(call.from_user.id):
         await keyboard_check_channel(call.message)
     else:
@@ -98,4 +108,4 @@ async def times_datetime(call: types.CallbackQuery):
                 msg += test_datetime[i]
         try:
             await call.message.edit_text(msg, reply_markup=datetime_times_category_keyboard)
-        except Exception: pass
+        except MessageNotModified: pass

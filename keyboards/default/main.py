@@ -6,6 +6,9 @@ main_keyboard = ReplyKeyboardMarkup(
         [
             KeyboardButton("🎞 Сгенерировать"),
             KeyboardButton("🌎 Местоположение")
+        ],
+        [
+            KeyboardButton("📊 Статистика"),
         ]
     ],
     resize_keyboard=True

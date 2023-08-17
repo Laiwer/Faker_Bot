@@ -1,12 +1,15 @@
 from loader import dp, fake
 from aiogram import types
-from keyboards.inline.language_kb import language_category_keyboard
-from keyboards.callbacks.callback_language import language_inline_callback
+from keyboards.inline.generate.person.language_kb import language_category_keyboard
+from keyboards.callbacks.generate.personality.callback_language import language_inline_callback
 from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from database.base import add_last_message
+from aiogram.utils.exceptions import MessageNotModified
 
 
 @dp.message_handler(text="👅 Язык")
 async def main_language(message: types.Message):
+    add_last_message(message.chat.id)
     if not await check_sub_channel(message.from_user.id):
         await keyboard_check_channel(message)
     else:
@@ -16,6 +19,7 @@ async def main_language(message: types.Message):
 @dp.callback_query_handler(language_inline_callback.filter(_pass="_"))
 async def language_data(call: types.CallbackQuery):
     await call.answer()
+    add_last_message(call.message.chat.id)
     if not await check_sub_channel(call.from_user.id):
         await keyboard_check_channel(call.message)
     else:
@@ -29,4 +33,4 @@ async def language_data(call: types.CallbackQuery):
                 msg += test_language[i]
         try:
             await call.message.edit_text(msg, reply_markup=language_category_keyboard)
-        except Exception: pass
+        except MessageNotModified: pass
