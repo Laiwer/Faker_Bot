@@ -3,13 +3,14 @@ from aiogram import types
 from keyboards.callbacks.generate.different.callback_locate import locate_inline_callback
 from keyboards.inline.generate.different.locate_kb import locate_category_keyboard, locate_address_category_keyboard, \
     locate_coordinate_category_keyboard, locate_geo_category_keyboard
-from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel, bot_action, bot_action_location
 from database.base import add_last_message
 from aiogram.utils.exceptions import MessageNotModified
 
 
 @dp.message_handler(text="🗺 Расположение")
 async def main_locate(message: types.Message):
+    await bot_action(message)
     add_last_message(message.chat.id)
     if not await check_sub_channel(message.from_user.id):
         await keyboard_check_channel(message)
@@ -114,6 +115,8 @@ async def locate_geo_data(call: types.CallbackQuery):
             if "Ширина" in call.message.text:
                 await bot.delete_message(call.message.chat.id, call.message.message_id-1)
             await bot.delete_message(call.message.chat.id, call.message.message_id)
+            await bot_action_location(call.message)
             await bot.send_location(call.message.chat.id, test_locate[key][0][0], test_locate[key][0][1])
+            await bot_action(call.message)
             await call.message.answer(msg, reply_markup=locate_geo_category_keyboard)
         except MessageNotModified: pass

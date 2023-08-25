@@ -1,10 +1,13 @@
 import logging
-from aiogram.utils.exceptions import (TelegramAPIError,
-                                      MessageNotModified,
-                                      CantParseEntities)
+from aiogram.utils.exceptions import (TelegramAPIError, MessageNotModified, CantParseEntities, RetryAfter)
 
 
 from loader import dp
+
+
+@dp.errors_handler(exception=RetryAfter)
+async def flood_system(update, exception):
+    await update.message.answer("⛔ <b>Вы заблокированы за спам на " + exception.args[0].split(" ")[5] + " сек.</b>")
 
 
 @dp.errors_handler()
@@ -22,12 +25,12 @@ async def errors_handler(update, exception):
         logging.exception('Message is not modified')
         # do something here?
         return True
-      
+    
     if isinstance(exception, CantParseEntities):
         # or here
         logging.exception(f'CantParseEntities: {exception} \nUpdate: {update}')
         return True
-      
+    
     #  MUST BE THE  LAST CONDITION (ЭТО УСЛОВИЕ ВСЕГДА ДОЛЖНО БЫТЬ В КОНЦЕ)
     if isinstance(exception, TelegramAPIError):
         logging.exception(f'TelegramAPIError: {exception} \nUpdate: {update}')

@@ -1,12 +1,22 @@
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandStart
 from loader import dp, bot, fake
+import asyncio
 from aiogram import types
 from keyboards.inline.subscribe_channel_kb import check_subscribe_keyboard
 from keyboards.default.main import main_keyboard
 from database.base import existe_in_db, add_user_in_data_base, add_user_in_geolocate, add_last_message, \
     update_send_start
+# from aiogram.utils.exceptions import Message
 
+
+async def bot_action(message):
+    await bot.send_chat_action(message.chat.id, types.ChatActions.TYPING)
+    await asyncio.sleep(0.3)
+
+async def bot_action_location(message):
+    await bot.send_chat_action(message.chat.id, types.ChatActions.FIND_LOCATION)
+    await asyncio.sleep(0.3)
 
 async def check_sub_channel(user_id):
     chat_member = await bot.get_chat_member(chat_id="@faker_bots_channel", user_id=user_id)
@@ -22,6 +32,7 @@ async def keyboard_check_channel(msg):
 @dp.message_handler(CommandStart())
 async def check_subscribe(message: types.Message):
     if message.chat.type == "private":
+        await bot_action(message)
         add_last_message(message.chat.id)
         update_send_start(message.chat.id, 0)
         if not existe_in_db("user", message.chat.id):

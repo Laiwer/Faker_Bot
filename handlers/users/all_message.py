@@ -2,13 +2,14 @@ from aiogram import types
 from loader import dp
 from random import choice
 from data.list_answer_bot import TEXT_ANSWER, ANIMATION_ANSWER, STICKER_ANSWER
-from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel, bot_action
 from database.base import add_last_message
 
 
 @dp.message_handler(content_types=types.ContentType.TEXT)
 async def all_message(message: types.Message):
     if message.chat.type == "private":
+        await bot_action(message)
         add_last_message(message.chat.id)
         if await check_sub_channel(message.from_user.id):
             await message.answer(choice(TEXT_ANSWER))
@@ -29,6 +30,7 @@ async def all_animation(message: types.Message):
 @dp.message_handler(content_types=types.ContentType.VOICE)
 async def all_animation(message: types.Message):
     if message.chat.type == "private":
+        await bot_action(message)
         add_last_message(message.chat.id)
         if await check_sub_channel(message.from_user.id):
             await message.answer("Брррррр, не люблю звук пенопласта")
@@ -49,6 +51,7 @@ async def all_animation(message: types.Message):
 @dp.message_handler(content_types=types.ContentType.AUDIO)
 async def all_animation(message: types.Message):
     if message.chat.type == "private":
+        await bot_action(message)
         add_last_message(message.chat.id)
         if await check_sub_channel(message.from_user.id):
             await message.answer("Это песня?")
@@ -59,6 +62,7 @@ async def all_animation(message: types.Message):
 @dp.message_handler(content_types=types.ContentType.DICE)
 async def all_animation(message: types.Message):
     if message.chat.type == "private":
+        await bot_action(message)
         add_last_message(message.chat.id)
         if await check_sub_channel(message.from_user.id):
             await message.answer("Ставлю на ....")
@@ -69,6 +73,7 @@ async def all_animation(message: types.Message):
 @dp.message_handler(content_types=types.ContentType.CONTACT)
 async def all_animation(message: types.Message):
     if message.chat.type == "private":
+        await bot_action(message)
         add_last_message(message.chat.id)
         if await check_sub_channel(message.from_user.id):
             await message.answer("+123456789")
@@ -79,6 +84,7 @@ async def all_animation(message: types.Message):
 @dp.message_handler(content_types=types.ContentType.DOCUMENT)
 async def all_animation(message: types.Message):
     if message.chat.type == "private":
+        await bot_action(message)
         add_last_message(message.chat.id)
         if await check_sub_channel(message.from_user.id):
             await message.answer("Забавный файлик...")
@@ -99,6 +105,7 @@ async def all_animation(message: types.Message):
 @dp.message_handler(content_types=types.ContentType.VIDEO)
 async def all_animation(message: types.Message):
     if message.chat.type == "private":
+        await bot_action(message)
         add_last_message(message.chat.id)
         if await check_sub_channel(message.from_user.id):
             await message.answer("Не могу понять, что тут снимали...")
@@ -119,6 +126,7 @@ async def all_animation(message: types.Message):
 @dp.message_handler(content_types=types.ContentType.POLL)
 async def all_animation(message: types.Message):
     if message.chat.type == "private":
+        await bot_action(message)
         add_last_message(message.chat.id)
         if await check_sub_channel(message.from_user.id):
             await message.answer("Наверное первый вариант...")

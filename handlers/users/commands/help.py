@@ -4,6 +4,7 @@ from database.base import add_last_message
 from keyboards.inline.commands.help_kb import instruction_help_category_keyboard, all_generate_menu_category_keyboard
 from aiogram.dispatcher.filters import CommandHelp
 from aiogram.utils.exceptions import MessageNotModified
+from handlers.users.commands.start import bot_action
 
 
 msg = "\nЯ 🥸 <b>𝙵𝚊𝚔𝚎𝚛 𝙱𝚘𝚝</b>."
@@ -16,6 +17,7 @@ msg += "\n🆕 Отправляй /start и начинай пользовать�
 
 @dp.message_handler(CommandHelp())
 async def command_help(message: types.Message):
+    await bot_action(message)
     add_last_message(message.chat.id)
     text = f"Привет <b>{message.chat.full_name}</b>!" + msg
     await message.answer(text, reply_markup=all_generate_menu_category_keyboard, disable_web_page_preview=True)

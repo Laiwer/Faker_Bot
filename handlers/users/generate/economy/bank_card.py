@@ -2,13 +2,14 @@ from loader import dp, fake
 from aiogram import types
 from keyboards.callbacks.generate.economy.callback_bank_card import bank_card_inline_callback
 from keyboards.inline.generate.economy.bank_card_kb import bank_card_category_keyboard
-from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel, bot_action
 from database.base import add_last_message
 from aiogram.utils.exceptions import MessageNotModified
 
 
 @dp.message_handler(text="💳 Банковская карта")
 async def main_bank_card(message: types.Message):
+    await bot_action(message)
     add_last_message(message.chat.id)
     if not await check_sub_channel(message.from_user.id):
         await keyboard_check_channel(message)

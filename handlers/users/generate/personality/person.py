@@ -1,7 +1,7 @@
 from aiogram import types
 from loader import dp, fake
 from database.base import add_last_message
-from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel, bot_action
 from keyboards.inline.generate.person.person_kb import person_category_keyboard
 from keyboards.callbacks.generate.personality.callback_person import person_inline_callback
 from aiogram.utils.exceptions import MessageNotModified
@@ -9,6 +9,7 @@ from aiogram.utils.exceptions import MessageNotModified
 
 @dp.message_handler(text="🧑 Человек")
 async def main_person(message: types.Message):
+    await bot_action(message)
     add_last_message(message.chat.id)
     if not await check_sub_channel(message.from_user.id):
         await keyboard_check_channel(message)

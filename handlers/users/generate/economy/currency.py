@@ -2,13 +2,14 @@ from loader import dp, fake
 from aiogram import types
 from keyboards.callbacks.generate.economy.callback_currency import currecny_inline_callback
 from keyboards.inline.generate.economy.currency_kb import currency_category_keyboard, currency_paper_category_keyboard, currency_crypto_category_keyboard
-from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel, bot_action
 from database.base import add_last_message
 from aiogram.utils.exceptions import MessageNotModified
 
 
 @dp.message_handler(text="💵 Валюты")
 async def main_currency(message: types.Message):
+    await bot_action(message)
     add_last_message(message.chat.id)
     if not await check_sub_channel(message.from_user.id):
         await keyboard_check_channel(message)

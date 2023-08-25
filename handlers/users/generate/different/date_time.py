@@ -3,13 +3,14 @@ from aiogram import types
 from keyboards.callbacks.generate.different.callback_datetime import datetime_inline_callback
 from keyboards.inline.generate.different.date_time_kb import datetime_category_keyboard, datetime_dates_category_keyboard, \
     datetime_dating_category_keyboard, datetime_times_category_keyboard
-from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel, bot_action
 from database.base import add_last_message
 from aiogram.utils.exceptions import MessageNotModified
 
 
 @dp.message_handler(text="📅 Дата и время")
 async def main_datetime(message: types.Message):
+    await bot_action(message)
     add_last_message(message.chat.id)
     if not await check_sub_channel(message.from_user.id):
         await keyboard_check_channel(message)

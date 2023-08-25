@@ -43,9 +43,9 @@ def count_all_bot_users() -> int:
     cursor.execute("SELECT user_id FROM user")
     return len(cursor.fetchall())
 
-def count_active_bot_users() -> int:
+def count_active_bot_users(last_or_join:str) -> int:
     # в течении суток
-    cursor.execute("SELECT last_message FROM user")
+    cursor.execute(f"SELECT {'last_message' if last_or_join == 'l' else 'join_date'} FROM user")
     data = cursor.fetchall()
     t = datetime.now(pytz.timezone('Europe/Moscow'))
     date_time = f"{t.day:02}.{t.month:02}.{t.year:04} {t.hour:02}:{t.minute:02}:{t.second:02}"
@@ -68,9 +68,9 @@ def count_active_bot_users() -> int:
                 continue
     return count
 
-def count_recently_bot_users() -> int:
+def count_recently_bot_users(last_or_join:str) -> int:
     # в течении последнего часа
-    cursor.execute("SELECT last_message FROM user")
+    cursor.execute(f"SELECT {'last_message' if last_or_join == 'l' else 'join_date'} FROM user")
     data = cursor.fetchall()
     t = datetime.now(pytz.timezone('Europe/Moscow'))
     date_time = f"{t.day:02}.{t.month:02}.{t.year:04} {t.hour:02}:{t.minute:02}:{t.second:02}"

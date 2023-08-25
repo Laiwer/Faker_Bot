@@ -1,7 +1,7 @@
 from aiogram import types
 from loader import dp, fake
 from database.base import add_last_message
-from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel, bot_action
 from keyboards.inline.generate.different.text_kb import text_category_keyboard, text_letters_category_keyboard, text_words_category_keyboard, \
     text_sentences_category_keyboard
 from keyboards.callbacks.generate.different.callback_text import text_inline_callback
@@ -11,6 +11,7 @@ from aiogram.utils.exceptions import MessageNotModified
 
 @dp.message_handler(text="📖 Текст")
 async def main_locate(message: types.Message):
+    await bot_action(message)
     add_last_message(message.chat.id)
     if not await check_sub_channel(message.from_user.id):
         await keyboard_check_channel(message)

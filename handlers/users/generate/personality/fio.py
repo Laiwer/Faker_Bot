@@ -2,13 +2,14 @@ from loader import dp, fake
 from aiogram import types
 from keyboards.callbacks.generate.personality.callback_fio import fio_inline_callback
 from keyboards.inline.generate.person.fio_kb import fio_category_keyboard, fio_male_category_keyboard, fio_female_category_keyboard
-from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel, bot_action
 from database.base import add_last_message
 from aiogram.utils.exceptions import MessageNotModified
 
 
 @dp.message_handler(text="🪪 ФИО")
 async def main_fio(message: types.Message):
+    await bot_action(message)
     add_last_message(message.chat.id)
     if not await check_sub_channel(message.from_user.id):
         await keyboard_check_channel(message)

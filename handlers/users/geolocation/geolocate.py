@@ -9,7 +9,7 @@ from states.geolocate_state import geolocate_search
 from data.list_answer_bot import NUMBER_ANSWER as NUM_ANSWER
 from keyboards.default.back_from_state_geo_kb import back_to_main
 from keyboards.default.main import main_keyboard
-from handlers.users.commands.start import check_sub_channel, keyboard_check_channel
+from handlers.users.commands.start import check_sub_channel, keyboard_check_channel, bot_action, bot_action_location
 from aiogram.utils.exceptions import MessageNotModified
 
 
@@ -23,6 +23,7 @@ def is_number(num):
 
 @dp.message_handler(text="🌎 Местоположение")
 async def geo_locate_main(message: types.Message):
+    await bot_action(message)
     add_last_message(message.chat.id)
     if not await check_sub_channel(message.from_user.id):
         await keyboard_check_channel(message)
@@ -46,6 +47,7 @@ async def back_to_geolocation_choice(call: types.CallbackQuery):
 
 @dp.message_handler(state=geolocate_search.Q1, text="⏪ Вернуться")
 async def return_to_geolocate_choice(message: types.Message, state: FSMContext):
+    await bot_action(message)
     add_last_message(message.chat.id)
     await message.answer("⏺ Главная страница", reply_markup=main_keyboard)
     await state.finish()
@@ -53,12 +55,14 @@ async def return_to_geolocate_choice(message: types.Message, state: FSMContext):
 
 @dp.message_handler(text="⏪ Вернуться")
 async def error_return_to_choice(message: types.Message):
+    await bot_action(message)
     add_last_message(message.chat.id)
     await message.answer("⏺ Главная страница", reply_markup=main_keyboard)
 
 
 @dp.callback_query_handler(geolocate_inline_callback.filter(_pass="_"))
 async def search_geolocate(call: types.CallbackQuery):
+    await bot_action(call.message)
     await call.answer()
     add_last_message(call.message.chat.id)
     if not await check_sub_channel(call.message.from_user.id):
@@ -85,8 +89,8 @@ async def search_geolocate(call: types.CallbackQuery):
 
 @dp.message_handler(state=geolocate_search.Q1, content_types=[types.ContentType.LOCATION, types.ContentType.TEXT])
 async def search_geolocate_q1(message: types.Message, state: FSMContext):
+    await bot_action(message)
     add_last_message(message.chat.id)
-
     location = 0
     if get_data_from_geolocate(message.chat.id)[0] in ["address", "city", "country", "postalcode"]:
         update_data_in_geolocate(message.chat.id, "request_user", message.text)
@@ -123,14 +127,17 @@ async def search_geolocate_q1(message: types.Message, state: FSMContext):
         except Exception:
             await message.answer("🧭 Скиньте геопозицию (нажмите на скрепку)")
 
+    await bot_action(message)
     if location != 0:
         if location is None:
             if get_data_from_geolocate(message.chat.id)[0] == "address":
                 await message.answer("🚫 Не получилось найти такой объект или адрес")
             elif get_data_from_geolocate(message.chat.id)[0] in ["coordinate", "point"]:
                 coords = get_data_from_geolocate(message.chat.id)[1].split(" ")
+                await bot_action_location(message)
                 await message.answer_location(coords[0], coords[1])
                 if location is None:
+                    await bot_action(message)
                     await message.answer("🌊 Скорее всего точка находится в море или океане")
             else:
                 await message.answer("🚫 Не получилось найти такой объект или адрес\n🔎 Попробуйте поискать в <b><i>🌏 Любой адрес или объект</i></b>")
@@ -159,25 +166,31 @@ async def search_geolocate_q1(message: types.Message, state: FSMContext):
             else:
                 location = geolocator.geocode({data[0]: data[1]}, exactly_one=False, addressdetails=True, language="ru")
             
+            
             if data[0] in ["coordinate", "point"]:
                 if data[0] == "point":
                     await bot.delete_message(message.chat.id, message.message_id)
+                await bot_action_location(message)
                 await message.answer_location(location[-1][0], location[-1][1])
                 msg = f"<code>{str(location[-1])[1:-1]}</code>\n"
                 for i in location[0].split(', '):
                     msg += f"\n<code>{i}</code>"
+                await bot_action(message)
                 await message.answer(msg, reply_markup=inline_kb)
             else:
+                await bot_action_location(message)
                 await message.answer_location(location[data[2]][-1][0], location[data[2]][-1][1])
                 msg = f"<code>{str(location[data[2]][-1])[1:-1]}</code>\n"
                 for i in location[0][0].split(', '):
                     msg += f"\n<code>{i}</code>"
+                await bot_action(message)
                 await message.answer(msg, reply_markup=inline_kb)
         await state.finish()
 
 
 @dp.callback_query_handler(text=">>>>>>")
 async def next_page(call: types.CallbackQuery):
+    await bot_action(call.message)
     await call.answer()
     add_last_message(call.message.chat.id)
     if not await check_sub_channel(call.message.from_user.id):
@@ -214,6 +227,7 @@ async def next_page(call: types.CallbackQuery):
 
 @dp.callback_query_handler(text="<<<<<<")
 async def previus_page(call: types.CallbackQuery):
+    await bot_action(call.message)
     await call.answer()
     add_last_message(call.message.chat.id)
     if not await check_sub_channel(call.message.from_user.id):
